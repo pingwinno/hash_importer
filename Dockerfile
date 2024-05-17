@@ -7,4 +7,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY hash_importer.py /usr/src/app
 
-CMD [ "python", "./hash_importer.py" ]
+ENTRYPOINT [ "python", "./hash_importer.py" ]
