@@ -16,7 +16,7 @@ parser.add_argument('--folder', type=str)
 args = parser.parse_args()
 
 chat_id = args.id
-args.folder = os.path.join('chat_dump/', args.folder)
+args.folder = os.path.join('/chat_dump/', args.folder)
 counter = 0
 
 
@@ -25,7 +25,7 @@ def has_class_but_no_id(tag):
 
 
 def parse_html(html_file):
-    zipfile_template = f'chat_dump/hash_data-{counter}.zip'
+    zipfile_template = f'/chat_dump/hash_data-{counter}.zip'
     page_data = {}
     html_doc = open(html_file)
     messages = BeautifulSoup(html_doc, 'html.parser')
