@@ -14,10 +14,12 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--id', type=str)
 parser.add_argument('--folder', type=str)
 args = parser.parse_args()
-
+page_data = {}
 chat_id = args.id
-args.folder = os.path.join('/chat_dump/', args.folder)
+args.folder = os.path.join('chat_dump/', args.folder)
 counter = 0
+
+zipfile_template = f'chat_dump/hash_data-{counter}.zip'
 
 
 def has_class_but_no_id(tag):
@@ -25,7 +27,6 @@ def has_class_but_no_id(tag):
 
 
 def parse_html(html_file):
-    zipfile_template = f'/chat_dump/hash_data-{counter}.zip'
     page_data = {}
     html_doc = open(html_file)
     messages = BeautifulSoup(html_doc, 'html.parser')
@@ -45,21 +46,21 @@ def parse_html(html_file):
         print(message_id)
         page_data[image_key] = message_id
 
-    page_data = dict(reversed(list(page_data.items())))
-    if os.path.exists(zipfile_template):
-        os.rename(zipfile_template, zipfile_template + ':' + str(datetime.datetime.now()))
-
-    with ZipFile(zipfile_template, 'x') as myzip:
-        ZipFile.writestr(myzip, 'hash_data.json', data=json.dumps(page_data))
-
-    with open(zipfile_template, 'rb') as t:
-        with ZipFile(t, 'r') as json_data:
-            json_str = json.load(json_data.open('hash_data.json'))
-
-    print(zipfile_template + ' has ' + str(len(json_str)) + ' elements')
-
 
 for file in os.listdir(args.folder):
     if file.endswith(".html"):
         parse_html(os.path.join(args.folder, file))
         counter += 1
+
+page_data = dict(reversed(list(page_data.items())))
+if os.path.exists(zipfile_template):
+    os.rename(zipfile_template, zipfile_template + ':' + str(datetime.datetime.now()))
+
+with ZipFile(zipfile_template, 'x') as myzip:
+    ZipFile.writestr(myzip, 'hash_data.json', data=json.dumps(page_data))
+
+with open(zipfile_template, 'rb') as t:
+    with ZipFile(t, 'r') as json_data:
+        json_str = json.load(json_data.open('hash_data.json'))
+
+print(zipfile_template + ' has ' + str(len(json_str)) + ' elements')
